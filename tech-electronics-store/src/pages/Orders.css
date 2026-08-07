@@ -1,0 +1,121 @@
+.orders-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+}
+
+.orders-page h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+}
+
+.order-success-banner {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+.order-card-header:hover { background: #f8fafc; }
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.order-id   { font-weight: 700; font-size: 15px; color: #1e293b; }
+.order-date { font-size: 13px; color: #64748b; }
+
+.order-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.order-status-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.order-total {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.order-card-body {
+  border-top: 1px solid #f1f5f9;
+  padding: 16px 20px;
+}
+
+.order-items { margin-bottom: 14px; }
+
+.order-item-row {
+  display: flex;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: #475569;
+  border-bottom: 1px solid #f8fafc;
+}
+.oi-name { flex: 1; }
+.oi-qty  { color: #94a3b8; }
+.oi-price { font-weight: 600; color: #1e293b; }
+
+.order-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Empty */
+.orders-empty {
+  text-align: center;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.orders-empty h2 { font-size: 22px; color: #1e293b; margin: 0; }
+.orders-empty p  { color: #64748b; margin: 0; }
+.orders-shop-btn {
+  margin-top: 8px;
+  padding: 12px 28px;
+  background: #2563eb;
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+}

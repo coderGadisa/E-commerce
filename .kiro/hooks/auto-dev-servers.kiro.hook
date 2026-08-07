@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "name": "Auto Start Dev Servers",
+  "description": "Automatically starts the backend (nodemon) and frontend (Vite) dev servers",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "start cmd /k \"cd /d c:\\Users\\gadis\\OneDrive\\Desktop\\E-commerce\\backend && npm run dev\" && timeout /t 2 && start cmd /k \"cd /d c:\\Users\\gadis\\OneDrive\\Desktop\\E-commerce\\tech-electronics-store && npm run dev\"",
+    "timeout": 0
+  }
+}
