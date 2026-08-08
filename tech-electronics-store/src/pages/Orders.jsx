@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiPackage, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FiPackage, FiChevronDown, FiChevronUp, FiExternalLink } from "react-icons/fi";
 import api from "../services/api";
 import Loader from "../components/Loader/Loader";
 import "./Orders.css";
 
 const STATUS_COLORS = {
   processing: { bg: "#fef9c3", color: "#92400e", label: "Processing" },
-  shipped:    { bg: "#dbeafe", color: "#1e40af", label: "Shipped" },
-  delivered:  { bg: "#dcfce7", color: "#166534", label: "Delivered" },
-  cancelled:  { bg: "#fee2e2", color: "#991b1b", label: "Cancelled" },
+  shipped: { bg: "#dbeafe", color: "#1e40af", label: "Shipped" },
+  delivered: { bg: "#dcfce7", color: "#166534", label: "Delivered" },
+  cancelled: { bg: "#fee2e2", color: "#991b1b", label: "Cancelled" },
 };
 
 function OrderCard({ order }) {
@@ -52,12 +52,15 @@ function OrderCard({ order }) {
             <div className="order-payment">
               <strong>Payment:</strong>{" "}
               {order.paymentMethod === "cash_on_delivery" ? "Cash on Delivery" :
-               order.paymentMethod === "card" ? "Card" : "Mobile Money"}
+                order.paymentMethod === "card" ? "Card" : "Mobile Money"}
               {" — "}
               <span style={{ color: order.paymentStatus === "paid" ? "#16a34a" : "#92400e" }}>
                 {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
               </span>
             </div>
+            <Link to={`/orders/${order._id}`} className="order-details-link">
+              <FiExternalLink size={13} /> View Details
+            </Link>
           </div>
         </div>
       )}

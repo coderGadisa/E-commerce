@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiShoppingCart } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { CartContext } from "../../context/CartContext";
+import StarRating from "../StarRating/StarRating";
 import { getImageSrc } from "../../utils/constants";
 import "./ProductCard.css";
 
@@ -34,6 +35,12 @@ function ProductCard({ product }) {
         <div className="product-info">
           <span className="product-category">{product.category}</span>
           <h3 className="product-name">{product.name}</h3>
+          {product.numReviews > 0 && (
+            <div className="product-rating">
+              <StarRating value={product.averageRating} size={13} />
+              <span className="product-rating__count">({product.numReviews})</span>
+            </div>
+          )}
           <p className="product-price">ETB {product.price?.toLocaleString()}</p>
         </div>
 

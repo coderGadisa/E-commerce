@@ -60,6 +60,42 @@ const deleteProduct = asyncHandler(async (req, res) => {
   res.json(new ApiResponse(true, result.message, null));
 });
 
+// ── Reviews ────────────────────────────────────────────────────────
+
+// @desc    Get all reviews for a product
+// @route   GET /api/products/:id/reviews
+// @access  Public
+const getReviews = asyncHandler(async (req, res) => {
+  const data = await productService.getReviews(req.params.id);
+  res.json(new ApiResponse(true, "Reviews retrieved", data, data.numReviews));
+});
+
+// @desc    Add a review to a product
+// @route   POST /api/products/:id/reviews
+// @access  Private
+const addReview = asyncHandler(async (req, res) => {
+  const data = await productService.addReview(
+    req.params.id,
+    req.user._id,
+    req.user.name,
+    req.body
+  );
+  res.status(201).json(new ApiResponse(true, "Review submitted", data));
+});
+
+// @desc    Delete a review
+// @route   DELETE /api/products/:id/reviews/:reviewId
+// @access  Private (own review) or Admin
+const deleteReview = asyncHandler(async (req, res) => {
+  const result = await productService.deleteReview(
+    req.params.id,
+    req.params.reviewId,
+    req.user._id,
+    req.user.role
+  );
+  res.json(new ApiResponse(true, result.message, null));
+});
+
 module.exports = {
   getProducts,
   getProductById,
@@ -67,4 +103,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  addReview,
+  getReviews,
+  deleteReview,
 };

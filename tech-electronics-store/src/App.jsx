@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import OrderDetails from "./pages/OrderDetails";
 import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
 
@@ -39,30 +40,31 @@ function App() {
       <main style={{ flex: 1 }}>
         <Routes>
           {/* ── Public ─────────────────────────────── */}
-          <Route path="/"              element={<Home />} />
-          <Route path="/products"      element={<Products />} />
-          <Route path="/products/:id"  element={<ProductDetails />} />
-          <Route path="/categories"    element={<Categories />} />
-          <Route path="/login"         element={<Login />} />
-          <Route path="/register"      element={<Register />} />
-          <Route path="/contact"       element={<Contact />} />
-          <Route path="/cart"          element={<Cart />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/cart" element={<Cart />} />
 
           {/* ── Private (must be logged in) ─────────── */}
           <Route element={<PrivateRoute />}>
             <Route path="/checkout" element={<Checkout />} />
-            <Route path="/orders"   element={<Orders />} />
-            <Route path="/profile"  element={<Profile />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:id" element={<OrderDetails />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
           </Route>
 
           {/* ── Admin (must be admin) ─────────────── */}
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index          element={<Dashboard />} />
+              <Route index element={<Dashboard />} />
               <Route path="products" element={<AdminProducts />} />
-              <Route path="orders"   element={<AdminOrders />} />
-              <Route path="users"    element={<AdminUsers />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<AdminUsers />} />
             </Route>
           </Route>
 

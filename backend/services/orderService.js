@@ -69,7 +69,7 @@ const getOrderById = async (orderId, userId, role) => {
   if (!order) throw new ApiError(404, "Order not found");
 
   // Users can only see their own orders
-  if (role !== "admin" && order.user._id.toString() !== userId) {
+  if (role !== "admin" && order.user._id.toString() !== userId.toString()) {
     throw new ApiError(403, "Not authorized to view this order");
   }
 
@@ -102,7 +102,7 @@ const cancelOrder = async (orderId, userId, role) => {
   const order = await Order.findById(orderId);
   if (!order) throw new ApiError(404, "Order not found");
 
-  if (role !== "admin" && order.user.toString() !== userId) {
+  if (role !== "admin" && order.user.toString() !== userId.toString()) {
     throw new ApiError(403, "Not authorized");
   }
 

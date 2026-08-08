@@ -43,15 +43,27 @@
   user-select: none;
   transition: background 0.2s;
 }
-.order-card-header:hover { background: #f8fafc; }
+
+.order-card-header:hover {
+  background: #f8fafc;
+}
 
 .order-meta {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.order-id   { font-weight: 700; font-size: 15px; color: #1e293b; }
-.order-date { font-size: 13px; color: #64748b; }
+
+.order-id {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.order-date {
+  font-size: 13px;
+  color: #64748b;
+}
 
 .order-right {
   display: flex;
@@ -77,7 +89,9 @@
   padding: 16px 20px;
 }
 
-.order-items { margin-bottom: 14px; }
+.order-items {
+  margin-bottom: 14px;
+}
 
 .order-item-row {
   display: flex;
@@ -87,9 +101,19 @@
   color: #475569;
   border-bottom: 1px solid #f8fafc;
 }
-.oi-name { flex: 1; }
-.oi-qty  { color: #94a3b8; }
-.oi-price { font-weight: 600; color: #1e293b; }
+
+.oi-name {
+  flex: 1;
+}
+
+.oi-qty {
+  color: #94a3b8;
+}
+
+.oi-price {
+  font-weight: 600;
+  color: #1e293b;
+}
 
 .order-footer {
   display: flex;
@@ -108,8 +132,18 @@
   align-items: center;
   gap: 12px;
 }
-.orders-empty h2 { font-size: 22px; color: #1e293b; margin: 0; }
-.orders-empty p  { color: #64748b; margin: 0; }
+
+.orders-empty h2 {
+  font-size: 22px;
+  color: #1e293b;
+  margin: 0;
+}
+
+.orders-empty p {
+  color: #64748b;
+  margin: 0;
+}
+
 .orders-shop-btn {
   margin-top: 8px;
   padding: 12px 28px;
@@ -118,4 +152,20 @@
   border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
+}
+
+/* View Details link */
+.order-details-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.order-details-link:hover {
+  text-decoration: underline;
 }
