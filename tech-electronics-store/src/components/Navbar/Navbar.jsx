@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   FiShoppingCart, FiUser, FiMenu, FiX,
@@ -14,6 +14,23 @@ function Navbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside (works on mobile too)
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   const handleLogout = () => {
     logout();
@@ -56,7 +73,7 @@ function Navbar() {
         </Link>
 
         {user ? (
-          <div className="navbar-user" onMouseLeave={() => setDropdownOpen(false)}>
+          <div className="navbar-user" ref={dropdownRef}>
             <button
               className="navbar-icon-btn user-btn"
               onClick={() => setDropdownOpen(!dropdownOpen)}

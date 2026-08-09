@@ -1,6 +1,25 @@
 const asyncHandler = require("../utils/asyncHandler");
 const productService = require("../services/productService");
 const ApiResponse = require("../utils/ApiResponse");
+const cloudinary = require("../config/cloudinary");
+
+// Helper — uploads a file buffer to Cloudinary and returns the secure URL
+const uploadToCloudinary = (buffer, mimetype) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "techstore/products",
+        resource_type: "image",
+        transformation: [{ width: 800, crop: "limit" }],
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+};
 
 // @desc    Get all products (with filters, search, pagination)
 // @route   GET /api/products
@@ -34,7 +53,7 @@ const getCategories = asyncHandler(async (req, res) => {
 const createProduct = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.image = `uploads/${req.file.filename}`;
+    data.image = await uploadToCloudinary(req.file.buffer, req.file.mimetype);
   }
   const product = await productService.createProduct(data);
   res.status(201).json(new ApiResponse(true, "Product created", product));
@@ -46,7 +65,7 @@ const createProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.image = `uploads/${req.file.filename}`;
+    data.image = await uploadToCloudinary(req.file.buffer, req.file.mimetype);
   }
   const product = await productService.updateProduct(req.params.id, data);
   res.json(new ApiResponse(true, "Product updated", product));

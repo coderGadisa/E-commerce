@@ -1,21 +1,23 @@
+// Load environment variables FIRST — before any other require()
+// so that process.env is populated when cloudinary, db, etc. initialise
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const path = require("path");
 
 const connectDB = require("./config/db");
 
-const authRoutes    = require("./routes/authRoutes");
+const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
-const cartRoutes    = require("./routes/cartRoutes");
-const orderRoutes   = require("./routes/orderRoutes");
-const userRoutes    = require("./routes/userRoutes");
-const adminRoutes   = require("./routes/adminRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const userRoutes = require("./routes/userRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
-const notFound     = require("./middleware/notFound");
+const notFound = require("./middleware/notFound");
 const errorHandler = require("./middleware/errorHandler");
 
-dotenv.config();
 connectDB();
 
 const app = express();
@@ -37,12 +39,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API Routes
-app.use("/api/auth",     authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/cart",     cartRoutes);
-app.use("/api/orders",   orderRoutes);
-app.use("/api/users",    userRoutes);
-app.use("/api/admin",    adminRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Tech Electronics Store API Running ✓" });

@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
-import { FiShoppingCart, FiHeart, FiArrowLeft, FiPackage } from "react-icons/fi";
+import { FiShoppingCart, FiHeart, FiPackage } from "react-icons/fi";
 import toast from "react-hot-toast";
 import api from "../services/api";
 import { CartContext } from "../context/CartContext";
@@ -9,7 +9,10 @@ import Loader from "../components/Loader/Loader";
 import StarRating from "../components/StarRating/StarRating";
 import ReviewList from "../components/ReviewList/ReviewList";
 import ReviewForm from "../components/ReviewForm/ReviewForm";
+import Breadcrumb from "../components/Breadcrumb/Breadcrumb";
+import ProductCard from "../components/ProductCard/ProductCard";
 import { getImageSrc } from "../utils/constants";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import "./ProductDetails.css";
 
 function ProductDetails() {
@@ -17,20 +20,26 @@ function ProductDetails() {
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
 
-  const [product, setProduct]               = useState(null);
-  const [loading, setLoading]               = useState(true);
-  const [error, setError]                   = useState(null);
-  const [qty, setQty]                       = useState(1);
-  const [added, setAdded]                   = useState(false);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
+  // Dynamic page title — updates when product loads
+  useDocumentTitle(product ? product.name : "Product");
+
   // Reviews state
-  const [reviews, setReviews]               = useState([]);
-  const [averageRating, setAverageRating]   = useState(0);
-  const [numReviews, setNumReviews]         = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [numReviews, setNumReviews] = useState(0);
   const [reviewsLoading, setReviewsLoading] = useState(false);
-  const [submitLoading, setSubmitLoading]   = useState(false);
-  const [hasReviewed, setHasReviewed]       = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
+
+  // Related products state
+  const [related, setRelated] = useState([]);
 
   // Fetch product
   useEffect(() => {
@@ -75,6 +84,25 @@ function ProductDetails() {
     };
     fetchReviews();
   }, [id, user]);
+
+  // Fetch related products (same category, exclude current)
+  useEffect(() => {
+    if (!product) return;
+    const fetchRelated = async () => {
+      try {
+        const res = await api.get(
+          `/products?category=${encodeURIComponent(product.category)}&limit=5`
+        );
+        const raw = res.data;
+        const list = Array.isArray(raw.data) ? raw.data : [];
+        // exclude the current product, cap at 4
+        setRelated(list.filter((p) => p._id !== id).slice(0, 4));
+      } catch {
+        // non-critical — silently ignore
+      }
+    };
+    fetchRelated();
+  }, [product, id]);
 
   const handleAddToCart = () => {
     for (let i = 0; i < qty; i++) addToCart(product);
@@ -150,9 +178,11 @@ function ProductDetails() {
 
   return (
     <div className="pd-page">
-      <Link to="/products" className="pd-back">
-        <FiArrowLeft /> Back to Products
-      </Link>
+      <Breadcrumb items={[
+        { label: "Home", path: "/" },
+        { label: "Products", path: "/products" },
+        { label: product.name },
+      ]} />
 
       {/* ── Product info ─────────────────────────── */}
       <div className="pd-container">
@@ -261,6 +291,17 @@ function ProductDetails() {
           )}
         </div>
       </div>
+      {/* ── Related products ─────────────────────── */}
+      {related.length > 0 && (
+        <div className="pd-related">
+          <h2 className="pd-related-title">You Might Also Like</h2>
+          <div className="pd-related-grid">
+            {related.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,10 +5,12 @@ import ProductCard from "../components/ProductCard/ProductCard";
 import CategoryCard from "../components/CategoryCard/CategoryCard";
 import SearchBar from "../components/SearchBar/SearchBar";
 import Hero from "../components/Hero/Hero";
-import Loader from "../components/Loader/Loader";
+import { ProductSkeletonGrid } from "../components/ProductSkeleton/ProductSkeleton";
 import categories from "../data/categories";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 function Home() {
+  useDocumentTitle("Home");
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -69,7 +71,7 @@ function Home() {
         {error && <p className="no-products" style={{ color: "#ef4444" }}>{error}</p>}
 
         {loading ? (
-          <Loader />
+          <ProductSkeletonGrid count={12} />
         ) : filteredProducts.length === 0 ? (
           <p className="no-products">No products found.</p>
         ) : (

@@ -5,12 +5,14 @@ import toast from "react-hot-toast";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { getImageSrc } from "../utils/constants";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import "./Cart.css";
 
 const SHIPPING_THRESHOLD = 5000;
 const SHIPPING_PRICE = 200;
 
 function Cart() {
+  useDocumentTitle("Shopping Cart");
   const {
     cartItems,
     removeFromCart,

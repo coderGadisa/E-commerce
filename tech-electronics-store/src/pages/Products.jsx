@@ -4,13 +4,15 @@ import api from "../services/api";
 import ProductCard from "../components/ProductCard/ProductCard";
 import SearchBar from "../components/SearchBar/SearchBar";
 import CategoryCard from "../components/CategoryCard/CategoryCard";
-import Loader from "../components/Loader/Loader";
+import { ProductSkeletonGrid } from "../components/ProductSkeleton/ProductSkeleton";
 import categories from "../data/categories";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import "./Products.css";
 
 const LIMIT = 12;
 
 function Products() {
+  useDocumentTitle("All Products");
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Read initial values from URL query params (e.g. from Categories page)
@@ -102,9 +104,22 @@ function Products() {
       </div>
 
       {loading ? (
-        <Loader />
+        <ProductSkeletonGrid count={12} />
       ) : products.length === 0 ? (
-        <p className="no-results">No products found. Try a different search or category.</p>
+        <div className="products-empty">
+          <span className="products-empty-icon">🔍</span>
+          <h2>No products found</h2>
+          <p>Try adjusting your search or filter to find what you're looking for.</p>
+          <button
+            className="products-empty-reset"
+            onClick={() => {
+              handleSearchChange("");
+              handleCategoryChange("All");
+            }}
+          >
+            Clear filters
+          </button>
+        </div>
       ) : (
         <div className="products-grid">
           {products.map((p) => (

@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FiPackage, FiChevronDown, FiChevronUp, FiExternalLink } from "react-icons/fi";
 import api from "../services/api";
 import Loader from "../components/Loader/Loader";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import "./Orders.css";
 
 const STATUS_COLORS = {
@@ -69,6 +70,7 @@ function OrderCard({ order }) {
 }
 
 function Orders() {
+  useDocumentTitle("My Orders");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const location = useLocation();

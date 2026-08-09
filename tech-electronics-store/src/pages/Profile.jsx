@@ -2,9 +2,11 @@ import { useState, useEffect, useContext } from "react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import "./Profile.css";
 
 function Profile() {
+  useDocumentTitle("My Profile");
   const { user, logout } = useContext(AuthContext);
 
   const [editing, setEditing] = useState(false);

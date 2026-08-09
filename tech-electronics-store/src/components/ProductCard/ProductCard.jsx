@@ -26,6 +26,9 @@ function ProductCard({ product }) {
             src={getImageSrc(product.image)}
             alt={product.name}
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src = "https://placehold.co/400x300?text=No+Image";
+            }}
           />
           {product.stock === 0 && (
             <span className="out-of-stock-badge">Out of Stock</span>

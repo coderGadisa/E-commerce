@@ -4,28 +4,33 @@ import { FiArrowLeft, FiPackage } from "react-icons/fi";
 import toast from "react-hot-toast";
 import api from "../services/api";
 import Loader from "../components/Loader/Loader";
+import Breadcrumb from "../components/Breadcrumb/Breadcrumb";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 import "./OrderDetails.css";
 
 const STATUS_COLORS = {
   processing: { bg: "#fef9c3", color: "#92400e", label: "Processing" },
-  shipped:    { bg: "#dbeafe", color: "#1e40af", label: "Shipped" },
-  delivered:  { bg: "#dcfce7", color: "#166534", label: "Delivered" },
-  cancelled:  { bg: "#fee2e2", color: "#991b1b", label: "Cancelled" },
+  shipped: { bg: "#dbeafe", color: "#1e40af", label: "Shipped" },
+  delivered: { bg: "#dcfce7", color: "#166534", label: "Delivered" },
+  cancelled: { bg: "#fee2e2", color: "#991b1b", label: "Cancelled" },
 };
 
 const PAYMENT_LABELS = {
   cash_on_delivery: "Cash on Delivery",
-  card:             "Card",
-  mobile_money:     "Mobile Money",
+  card: "Card",
+  mobile_money: "Mobile Money",
 };
 
 function OrderDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [order, setOrder]       = useState(null);
-  const [loading, setLoading]   = useState(true);
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+
+  // Updates when order loads — hook always called, title updates reactively
+  useDocumentTitle(order ? `Order #${order._id.slice(-8).toUpperCase()}` : "Order Details");
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -61,13 +66,19 @@ function OrderDetails() {
   };
 
   if (loading) return <Loader />;
-  if (!order)  return null;
+  if (!order) return null;
 
   const s = STATUS_COLORS[order.orderStatus] || STATUS_COLORS.processing;
   const shortId = order._id.slice(-8).toUpperCase();
 
   return (
     <div className="od-page">
+      <Breadcrumb items={[
+        { label: "Home", path: "/" },
+        { label: "My Orders", path: "/orders" },
+        { label: `Order #${shortId}` },
+      ]} />
+
       {/* Back link */}
       <Link to="/orders" className="od-back">
         <FiArrowLeft size={16} /> Back to Orders
@@ -175,7 +186,7 @@ function OrderDetails() {
                 className="od-payment-status"
                 style={{
                   color: order.paymentStatus === "paid" ? "#16a34a" :
-                         order.paymentStatus === "failed" ? "#dc2626" : "#92400e",
+                    order.paymentStatus === "failed" ? "#dc2626" : "#92400e",
                 }}
               >
                 {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
