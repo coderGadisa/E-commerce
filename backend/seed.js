@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
+const dns = require("dns");
 const dotenv = require("dotenv");
 const Product = require("./models/Product");
 
 dotenv.config();
+
+// Same DNS fix as db.js — local 127.0.0.1 DNS refuses Node's SRV lookups
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 // Using picsum.photos — a free, stable, CORS-friendly image CDN
 // Each URL returns a deterministic image based on the seed number
@@ -131,7 +135,9 @@ const products = [
 
 async function seed() {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
     console.log("Connected to MongoDB");
 
     await Product.deleteMany({});
