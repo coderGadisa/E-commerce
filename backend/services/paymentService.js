@@ -2,7 +2,19 @@ const https = require("https");
 const Order = require("../models/Order");
 const ApiError = require("../utils/ApiError");
 
-const CHAPA_BASE_URL = "https://api.chapa.co/v1"; // kept for reference
+// ─────────────────────────────────────────────────────────
+// Serialize a Chapa error message safely.
+// Chapa returns message as either a string OR an object of
+// field → [errors] when there are validation errors.
+// ─────────────────────────────────────────────────────────
+const serializeChapaError = (message) => {
+  if (!message) return "Payment initialization failed";
+  if (typeof message === "string") return message;
+  // Object of field errors — flatten into a readable string
+  return Object.entries(message)
+    .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
+    .join(" | ");
+};
 
 // ─────────────────────────────────────────────────────────
 // Internal helper — makes HTTPS requests to Chapa REST API
@@ -62,13 +74,10 @@ const generateTxRef = (orderId) => {
 // ─────────────────────────────────────────────────────────
 // initializePayment
 //
-// Called after an order is created with paymentMethod
-// "card" or "mobile_money".
-//
-// 1. Generates a unique txRef
-// 2. Saves txRef to the order document
-// 3. Calls Chapa /transaction/initialize
-// 4. Returns the Chapa checkout_url for frontend redirect
+// Chapa field constraints (from their API validation):
+//   customization.title       → max 16 characters
+//   customization.description → letters, numbers, hyphens,
+//                               underscores, spaces, dots only
 // ─────────────────────────────────────────────────────────
 const initializePayment = async (orderId, userEmail, userName) => {
   const order = await Order.findById(orderId);
@@ -85,7 +94,8 @@ const initializePayment = async (orderId, userEmail, userName) => {
   await order.save();
 
   const firstName = userName?.split(" ")[0] || "Customer";
-  const lastName = userName?.split(" ").slice(1).join(" ") || "TechStore";
+  // Chapa requires last_name — use "User" if not available
+  const lastName = (userName?.split(" ").slice(1).join(" ") || "User").trim() || "User";
 
   const returnUrl = `${process.env.CLIENT_URL}/payment/verify?tx_ref=${txRef}&order_id=${orderId}`;
 
@@ -99,8 +109,10 @@ const initializePayment = async (orderId, userEmail, userName) => {
     callback_url: returnUrl,
     return_url: returnUrl,
     customization: {
-      title: "TechStore Payment",
-      description: `Payment for order #${orderId.toString().slice(-8).toUpperCase()}`,
+      // max 16 chars
+      title: "TechStore",
+      // only letters, numbers, hyphens, underscores, spaces, dots
+      description: `Order-${orderId.toString().slice(-8).toUpperCase()}`,
     },
   };
 
@@ -110,7 +122,8 @@ const initializePayment = async (orderId, userEmail, userName) => {
     // Roll back txRef if Chapa rejected the request
     order.txRef = null;
     await order.save();
-    throw new ApiError(502, data?.message || "Payment initialization failed");
+    const errMsg = serializeChapaError(data?.message);
+    throw new ApiError(502, errMsg);
   }
 
   return {
@@ -122,19 +135,10 @@ const initializePayment = async (orderId, userEmail, userName) => {
 
 // ─────────────────────────────────────────────────────────
 // verifyPayment
-//
-// Called when the user returns from Chapa's hosted page.
-//
-// 1. Looks up the order by txRef
-// 2. Calls Chapa GET /transaction/verify/:tx_ref
-// 3. If Chapa says "success" → marks order paymentStatus "paid"
-// 4. If Chapa says anything else → marks paymentStatus "failed"
-// 5. Returns the updated order
 // ─────────────────────────────────────────────────────────
 const verifyPayment = async (txRef) => {
   if (!txRef) throw new ApiError(400, "Transaction reference is required");
 
-  // Find the order that owns this txRef
   const order = await Order.findOne({ txRef });
   if (!order) throw new ApiError(404, "Order not found for this transaction");
 
@@ -160,7 +164,7 @@ const verifyPayment = async (txRef) => {
   order.paymentStatus = "failed";
   await order.save();
 
-  const reason = data?.message || chapaStatus || "Payment was not completed";
+  const reason = serializeChapaError(data?.message) || chapaStatus || "Payment was not completed";
   throw new ApiError(402, reason);
 };
 

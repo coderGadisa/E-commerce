@@ -23,6 +23,7 @@ function Checkout() {
     paymentMethod: "cash_on_delivery",
   });
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const subtotal = getCartTotal();
   const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_PRICE;
@@ -34,6 +35,7 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading || submitted) return;
     if (!form.street || !form.city || !form.country) {
       toast.error("Please fill in all required address fields.");
       return;
@@ -45,6 +47,7 @@ function Checkout() {
 
     try {
       setLoading(true);
+      setSubmitted(true);
       const orderPayload = {
         items: cartItems.map((item) => ({
           product: item._id,
@@ -81,7 +84,14 @@ function Checkout() {
       window.location.href = checkoutUrl;
 
     } catch (err) {
-      toast.error(err.response?.data?.message || "Order failed. Please try again.");
+      setSubmitted(false); // allow retry on error
+      const msg = err.response?.data?.message;
+      const displayMsg = typeof msg === "string"
+        ? msg
+        : msg && typeof msg === "object"
+          ? Object.values(msg).flat().join(" | ")
+          : "Order failed. Please try again.";
+      toast.error(displayMsg);
     } finally {
       setLoading(false);
     }

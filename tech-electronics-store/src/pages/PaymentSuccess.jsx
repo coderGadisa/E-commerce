@@ -13,11 +13,11 @@ function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const txRef   = searchParams.get("tx_ref");
+  const txRef = searchParams.get("tx_ref");
   const orderId = searchParams.get("order_id");
 
-  const [status, setStatus]   = useState("verifying"); // "verifying" | "success" | "failed"
-  const [order,  setOrder]    = useState(null);
+  const [status, setStatus] = useState("verifying"); // "verifying" | "success" | "failed"
+  const [order, setOrder] = useState(null);
 
   useEffect(() => {
     if (!txRef) {
@@ -39,7 +39,12 @@ function PaymentSuccess() {
           setStatus("failed");
         }
       } catch (err) {
-        const msg = err?.response?.data?.message || "Payment verification failed.";
+        const raw = err?.response?.data?.message;
+        const msg = typeof raw === "string"
+          ? raw
+          : raw && typeof raw === "object"
+            ? Object.values(raw).flat().join(" | ")
+            : "Payment verification failed.";
         // If already verified, treat as success
         if (err?.response?.data?.success === true) {
           setStatus("success");
