@@ -61,9 +61,25 @@ function Checkout() {
       };
 
       const res = await api.post("/orders", orderPayload);
+      const createdOrder = res.data.data;
       clearCart();
-      toast.success("Order placed successfully! 🎉");
-      navigate("/orders", { state: { newOrder: res.data.data } });
+
+      // ── Cash on delivery: existing behaviour unchanged ──
+      if (form.paymentMethod === "cash_on_delivery") {
+        toast.success("Order placed successfully! 🎉");
+        navigate("/orders", { state: { newOrder: createdOrder } });
+        return;
+      }
+
+      // ── Card / Mobile Money: redirect to Chapa ──
+      toast.success("Order created — redirecting to payment...");
+      const payRes = await api.post("/payment/initialize", {
+        orderId: createdOrder._id,
+      });
+      const { checkoutUrl } = payRes.data.data;
+      // Full browser redirect to Chapa hosted payment page
+      window.location.href = checkoutUrl;
+
     } catch (err) {
       toast.error(err.response?.data?.message || "Order failed. Please try again.");
     } finally {
@@ -136,7 +152,11 @@ function Checkout() {
           </div>
 
           <button type="submit" className="place-order-btn" disabled={loading}>
-            {loading ? "Placing Order..." : `Place Order — ETB ${total.toLocaleString()}`}
+            {loading
+              ? (form.paymentMethod === "cash_on_delivery" ? "Placing Order..." : "Redirecting to Payment...")
+              : form.paymentMethod === "cash_on_delivery"
+                ? `Place Order — ETB ${total.toLocaleString()}`
+                : `Pay ETB ${total.toLocaleString()} via Chapa`}
           </button>
         </form>
 

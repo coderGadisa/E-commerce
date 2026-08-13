@@ -5,8 +5,16 @@ const Product = require("./models/Product");
 
 dotenv.config();
 
-// Same DNS fix as db.js — local 127.0.0.1 DNS refuses Node's SRV lookups
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+// Same DNS strategy as db.js — skip loopback, use network/public resolvers
+{
+  const envDns = process.env.MONGO_DNS
+    ? process.env.MONGO_DNS.split(",").map((s) => s.trim())
+    : [];
+  const systemServers = dns.getServers().filter((s) => !s.startsWith("127.") && s !== "::1");
+  const publicFallbacks = ["8.8.8.8", "1.1.1.1"];
+  const all = [...envDns, ...systemServers, ...publicFallbacks];
+  dns.setServers(all.filter((s, i) => all.indexOf(s) === i));
+}
 
 // Using Unsplash CDN — stable permanent photo URLs matched to each product type
 const products = [

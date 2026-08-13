@@ -24,6 +24,8 @@ import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
 import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailed from "./pages/PaymentFailed";
 
 // Admin Pages
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -56,6 +58,8 @@ function App() {
             <Route path="/orders/:id" element={<OrderDetails />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/payment/verify" element={<PaymentSuccess />} />
+            <Route path="/payment/failed" element={<PaymentFailed />} />
           </Route>
 
           {/* ── Admin (must be admin) ─────────────── */}

@@ -40,6 +40,12 @@ const orderSchema = new mongoose.Schema(
       enum: ["pending", "paid", "failed"],
       default: "pending",
     },
+    // Chapa transaction reference — set when a Chapa payment is initialized
+    // Used to verify payment status with Chapa API
+    txRef: {
+      type: String,
+      default: null,
+    },
     orderStatus: {
       type: String,
       enum: ["processing", "shipped", "delivered", "cancelled"],

@@ -1,0 +1,147 @@
+.pf-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.pf-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 48px 40px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+}
+
+.pf-icon-wrap {
+  margin-bottom: 20px;
+}
+
+.pf-icon {
+  color: #dc2626;
+}
+
+.pf-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 10px;
+}
+
+.pf-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.pf-order-ref {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+}
+
+.pf-order-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.pf-order-id {
+  font-size: 15px;
+  font-weight: 700;
+  color: #dc2626;
+  font-family: monospace;
+}
+
+.pf-reasons {
+  background: #fafafa;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.pf-reasons-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0 0 8px;
+}
+
+.pf-reasons ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.pf-reasons ul li {
+  font-size: 13px;
+  color: #64748b;
+  padding: 2px 0;
+}
+
+.pf-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pf-btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.pf-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.pf-btn-secondary {
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+}
+
+.pf-btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.pf-btn-ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.pf-btn-ghost:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+@media (max-width: 520px) {
+  .pf-card {
+    padding: 32px 20px;
+  }
+}

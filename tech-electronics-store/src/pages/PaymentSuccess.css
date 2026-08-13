@@ -1,0 +1,152 @@
+.ps-page {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.ps-verifying-text {
+  margin-top: 16px;
+  font-size: 15px;
+  color: #64748b;
+}
+
+.ps-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 48px 40px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+}
+
+.ps-icon-wrap {
+  margin-bottom: 20px;
+}
+
+.ps-icon {
+  color: #16a34a;
+}
+
+.ps-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 10px;
+}
+
+.ps-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+.ps-order-ref {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+}
+
+.ps-order-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ps-order-id {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  font-family: monospace;
+}
+
+.ps-summary {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.ps-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ps-summary-row:last-child {
+  border-bottom: none;
+}
+
+.ps-paid {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.ps-processing {
+  color: #92400e;
+  font-weight: 600;
+}
+
+.ps-amount {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.ps-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ps-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ps-btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.ps-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.ps-btn-secondary {
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+}
+
+.ps-btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 520px) {
+  .ps-card {
+    padding: 32px 20px;
+  }
+}
