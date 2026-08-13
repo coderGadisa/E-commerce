@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const templates  = require("../utils/emailTemplates");
+const templates = require("../utils/emailTemplates");
 
 // ─────────────────────────────────────────────────────────
 // Create transporter lazily so missing env vars at startup
@@ -20,7 +20,13 @@ const getTransporter = () => {
 
   _transporter = nodemailer.createTransport({
     service: "gmail",
-    auth: { user, pass },
+    auth: {
+      user: user,
+      // Strip spaces — Gmail app passwords are sometimes pasted as
+      // "xxxx xxxx xxxx xxxx" (19 chars with spaces) but the real
+      // credential is the 16-char version without spaces
+      pass: pass.replace(/\s/g, ""),
+    },
   });
 
   return _transporter;
