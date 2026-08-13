@@ -1,7 +1,9 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const Cart = require("../models/Cart");
+const User = require("../models/User");
 const ApiError = require("../utils/ApiError");
+const emailService = require("./emailService");
 
 const SHIPPING_THRESHOLD = 5000; // Free shipping above this amount (ETB)
 const SHIPPING_PRICE = 200;
@@ -56,6 +58,16 @@ const createOrder = async (userId, { items, shippingAddress, paymentMethod }) =>
     shippingPrice,
     totalPrice,
   });
+
+  // Send order confirmation for Cash on Delivery orders only.
+  // Card/mobile_money orders get a payment confirmation email
+  // after Chapa verifies the payment (in paymentService.verifyPayment).
+  if (paymentMethod === "cash_on_delivery") {
+    try {
+      const user = await User.findById(userId, "name email").lean();
+      if (user) emailService.sendOrderConfirmationEmail(user, order);
+    } catch { /* non-critical */ }
+  }
 
   return order;
 };
@@ -119,6 +131,13 @@ const cancelOrder = async (orderId, userId, role) => {
 
   order.orderStatus = "cancelled";
   await order.save();
+
+  // Send cancellation email
+  try {
+    const user = await User.findById(order.user, "name email").lean();
+    if (user) emailService.sendOrderCancellationEmail(user, order);
+  } catch { /* non-critical */ }
+
   return order;
 };
 

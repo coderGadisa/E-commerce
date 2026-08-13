@@ -2,6 +2,8 @@ const asyncHandler = require("../utils/asyncHandler");
 const userService = require("../services/userService");
 const orderService = require("../services/orderService");
 const ApiResponse = require("../utils/ApiResponse");
+const emailService = require("../services/emailService");
+const User = require("../models/User");
 
 // @desc    Get all users
 // @route   GET /api/admin/users
@@ -39,6 +41,13 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     req.params.id,
     req.body
   );
+
+  // Send status update email to the customer — fire-and-forget
+  try {
+    const user = await User.findById(order.user, "name email").lean();
+    if (user) emailService.sendOrderStatusUpdateEmail(user, order);
+  } catch { /* non-critical */ }
+
   res.json(new ApiResponse(true, "Order updated", order));
 });
 

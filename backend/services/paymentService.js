@@ -1,6 +1,8 @@
 const https = require("https");
 const Order = require("../models/Order");
+const User = require("../models/User");
 const ApiError = require("../utils/ApiError");
+const emailService = require("./emailService");
 
 // ─────────────────────────────────────────────────────────
 // Serialize a Chapa error message safely.
@@ -157,6 +159,13 @@ const verifyPayment = async (txRef) => {
   if (status === 200 && chapaStatus === "success") {
     order.paymentStatus = "paid";
     await order.save();
+
+    // Send payment confirmation email — fire-and-forget
+    try {
+      const user = await User.findById(order.user, "name email").lean();
+      if (user) emailService.sendPaymentConfirmationEmail(user, order);
+    } catch { /* non-critical */ }
+
     return { order, alreadyVerified: false };
   }
 

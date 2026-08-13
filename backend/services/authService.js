@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const ApiError = require("../utils/ApiError");
+const emailService = require("./emailService");
 
 const registerUser = async ({ name, email, password }) => {
   const existing = await User.findOne({ email });
@@ -10,6 +11,9 @@ const registerUser = async ({ name, email, password }) => {
 
   // User model pre-save hook handles hashing — do NOT hash here
   const user = await User.create({ name, email, password });
+
+  // Send welcome email — fire-and-forget, never blocks registration
+  emailService.sendWelcomeEmail({ name: user.name, email: user.email });
 
   return {
     _id: user._id,
