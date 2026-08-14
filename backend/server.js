@@ -21,9 +21,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const helmet = require("helmet");
-const mongoSanitize = require("express-mongo-sanitize");
-const hpp = require("hpp");
 const rateLimit = require("express-rate-limit");
+const sanitize = require("./middleware/sanitize");
 
 const connectDB = require("./config/db");
 
@@ -83,12 +82,11 @@ const apiLimiter = rateLimit({
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
-// ── NoSQL injection protection ────────────────────────────────────────────────
-// Strips $ and . from request body, query, and params
-app.use(mongoSanitize());
-
-// ── HTTP Parameter Pollution protection ──────────────────────────────────────
-app.use(hpp());
+// ── NoSQL injection + HPP protection (Express 5 compatible) ──────────────────
+// express-mongo-sanitize and hpp are incompatible with Express 5 because they
+// attempt to reassign req.query which is a read-only getter in Express 5.
+// Our custom sanitize middleware mutates properties in-place instead.
+app.use(sanitize);
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use("/api/auth", authLimiter, authRoutes);
