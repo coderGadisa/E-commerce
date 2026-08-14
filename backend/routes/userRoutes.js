@@ -35,15 +35,4 @@ router.post("/wishlist/:productId", addToWishlist);
 
 router.delete("/wishlist/:productId", removeFromWishlist);
 
-// ======================================
-// Test Route
-// ======================================
-
-router.get("/test", (req, res) => {
-  res.json({
-    success: true,
-    message: "User routes are working",
-  });
-});
-
 module.exports = router;

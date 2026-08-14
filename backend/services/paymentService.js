@@ -81,9 +81,14 @@ const generateTxRef = (orderId) => {
 //   customization.description → letters, numbers, hyphens,
 //                               underscores, spaces, dots only
 // ─────────────────────────────────────────────────────────
-const initializePayment = async (orderId, userEmail, userName) => {
+const initializePayment = async (orderId, userEmail, userName, userId) => {
   const order = await Order.findById(orderId);
   if (!order) throw new ApiError(404, "Order not found");
+
+  // Verify the requesting user owns this order
+  if (order.user.toString() !== userId.toString()) {
+    throw new ApiError(403, "Not authorized to pay for this order");
+  }
 
   if (order.paymentStatus === "paid") {
     throw new ApiError(400, "Order is already paid");

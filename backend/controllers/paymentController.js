@@ -16,14 +16,15 @@ const initializePayment = asyncHandler(async (req, res) => {
   const result = await paymentService.initializePayment(
     orderId,
     req.user.email,
-    req.user.name
+    req.user.name,
+    req.user._id
   );
 
   res.status(200).json(
     new ApiResponse(true, "Payment initialized", {
       checkoutUrl: result.checkoutUrl,
-      txRef:       result.txRef,
-      orderId:     result.orderId,
+      txRef: result.txRef,
+      orderId: result.orderId,
     })
   );
 });
@@ -46,11 +47,11 @@ const verifyPayment = asyncHandler(async (req, res) => {
 
   res.status(200).json(
     new ApiResponse(true, message, {
-      orderId:       order._id,
+      orderId: order._id,
       paymentStatus: order.paymentStatus,
-      orderStatus:   order.orderStatus,
-      totalPrice:    order.totalPrice,
-      txRef:         order.txRef,
+      orderStatus: order.orderStatus,
+      totalPrice: order.totalPrice,
+      txRef: order.txRef,
     })
   );
 });

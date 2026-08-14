@@ -20,7 +20,7 @@ const registerUser = async ({ name, email, password }) => {
     name: user.name,
     email: user.email,
     role: user.role,
-    token: generateToken(user._id, user.role),
+    token: generateToken(user._id),
   };
 };
 
@@ -37,7 +37,7 @@ const loginUser = async ({ email, password }) => {
     email: user.email,
     role: user.role,
     avatar: user.avatar,
-    token: generateToken(user._id, user.role),
+    token: generateToken(user._id),
   };
 };
 

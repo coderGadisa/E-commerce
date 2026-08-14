@@ -11,8 +11,8 @@ const registerValidationRules = [
     .withMessage("Valid email is required"),
 
   body("password")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters"),
+    .isLength({ min: 6, max: 72 })
+    .withMessage("Password must be between 6 and 72 characters"),
 ];
 
 const loginValidationRules = [

@@ -17,7 +17,7 @@ const createOrder = async (userId, { items, shippingAddress, paymentMethod }) =>
   const orderItems = await Promise.all(
     items.map(async (item) => {
       const product = await Product.findById(item.product);
-      if (!product) throw new ApiError(404, `Product not found: ${item.product}`);
+      if (!product) throw new ApiError(404, "A product in your order was not found");
       if (product.stock < item.quantity) {
         throw new ApiError(400, `Insufficient stock for ${product.name}`);
       }
