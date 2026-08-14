@@ -11,6 +11,12 @@ const updateUserProfile = async (userId, updates) => {
   const user = await User.findById(userId);
   if (!user) throw new ApiError(404, "User not found");
 
+  // Explicitly block role changes via this endpoint —
+  // role management is admin-only via PUT /api/admin/users/:id/role
+  if (updates.role !== undefined) {
+    throw new ApiError(403, "Role cannot be changed via profile update");
+  }
+
   if (updates.name) user.name = updates.name;
   if (updates.email) user.email = updates.email;
   if (updates.address) {
@@ -85,6 +91,39 @@ const deleteUser = async (userId) => {
   if (!user) throw new ApiError(404, "User not found");
   return { message: "User deleted" };
 };
+
+/**
+ * Change a user's role. Protected by:
+ *  - last-admin guard: if target is admin and they're the only one → block
+ *  - valid role values only: "user" | "admin"
+ */
+const changeUserRole = async (targetUserId, newRole, requestingAdminId) => {
+  const VALID_ROLES = ["user", "admin"];
+  if (!VALID_ROLES.includes(newRole)) {
+    throw new ApiError(400, `Invalid role. Must be one of: ${VALID_ROLES.join(", ")}`);
+  }
+
+  const target = await User.findById(targetUserId);
+  if (!target) throw new ApiError(404, "User not found");
+
+  // Last-admin protection: block removing the only admin
+  if (target.role === "admin" && newRole !== "admin") {
+    const adminCount = await User.countDocuments({ role: "admin" });
+    if (adminCount <= 1) {
+      throw new ApiError(400, "Cannot remove the last administrator");
+    }
+  }
+
+  target.role = newRole;
+  await target.save();
+
+  return {
+    _id: target._id,
+    name: target.name,
+    email: target.email,
+    role: target.role,
+  };
+};
 const uploadAvatar = async (userId, filename) => {
   const user = await User.findById(userId);
 
@@ -107,4 +146,5 @@ module.exports = {
   removeFromWishlist,
   getAllUsers,
   deleteUser,
+  changeUserRole,
 };

@@ -2,6 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const userService = require("../services/userService");
 const orderService = require("../services/orderService");
 const ApiResponse = require("../utils/ApiResponse");
+const ApiError = require("../utils/ApiError");
 const emailService = require("../services/emailService");
 const User = require("../models/User");
 
@@ -21,6 +22,21 @@ const getAllUsers = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
   const result = await userService.deleteUser(req.params.id);
   res.json(new ApiResponse(true, result.message, null));
+});
+
+// @desc    Change a user's role
+// @route   PUT /api/admin/users/:id/role
+// @access  Private/Admin
+const changeUserRole = asyncHandler(async (req, res) => {
+  const { role } = req.body;
+  if (!role) throw new ApiError(400, "role is required");
+
+  const updated = await userService.changeUserRole(
+    req.params.id,
+    role,
+    req.user._id
+  );
+  res.json(new ApiResponse(true, `User role updated to ${updated.role}`, updated));
 });
 
 // @desc    Get all orders
@@ -82,6 +98,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
 module.exports = {
   getAllUsers,
   deleteUser,
+  changeUserRole,
   getAllOrders,
   updateOrderStatus,
   getDashboardStats,
