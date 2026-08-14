@@ -2,43 +2,34 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const protect = async (req, res, next) => {
-  let token;
+  const authHeader = req.headers.authorization;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ success: false, message: "No token provided" });
+  }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const token = authHeader.split(" ")[1];
 
-      req.user = await User.findById(decoded.id).select("-password");
-
-      if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-
-      next();
-    } catch (error) {
-  console.log(error);
-
-  return res.status(401).json({
-    success: false,
-    message: error.message,
-  });
-    }
-  } else {
-    return res.status(401).json({
-      success: false,
-      message: "No token provided",
+  try {
+    // Pin algorithm to HS256 — prevents "none" algorithm attacks
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ["HS256"],
     });
+
+    // Always load user from DB so revoked/deleted accounts are caught
+    req.user = await User.findById(decoded.id).select("-password");
+
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+
+    next();
+  } catch {
+    // Never expose the underlying JWT error message to the client —
+    // it reveals whether the token was malformed, expired, or had
+    // an invalid signature, which helps attackers narrow down attacks.
+    return res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
 };
 
-module.exports = {
-  protect,
-};
+module.exports = { protect };
