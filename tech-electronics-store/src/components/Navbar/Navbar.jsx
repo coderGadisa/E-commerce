@@ -2,7 +2,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   FiShoppingCart, FiUser, FiMenu, FiX,
-  FiHeart, FiLogOut, FiSettings,
+  FiHeart, FiLogOut, FiSettings, FiPackage,
 } from "react-icons/fi";
 import { CartContext } from "../../context/CartContext";
 import { AuthContext } from "../../context/AuthContext";
@@ -59,6 +59,13 @@ function Navbar() {
           <li>
             <NavLink to="/wishlist" onClick={() => setMenuOpen(false)}>
               <FiHeart /> Wishlist
+            </NavLink>
+          </li>
+        )}
+        {user && (
+          <li>
+            <NavLink to="/orders" onClick={() => setMenuOpen(false)}>
+              <FiPackage /> My Orders
             </NavLink>
           </li>
         )}

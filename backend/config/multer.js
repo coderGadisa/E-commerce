@@ -1,7 +1,7 @@
 const multer = require("multer");
+const ApiError = require("../utils/ApiError");
 
-// Use memory storage — files are held in req.file.buffer
-// and uploaded directly to Cloudinary in the controller.
+// Memory storage — files are streamed directly to Cloudinary.
 // Nothing is written to the local filesystem.
 const storage = multer.memoryStorage();
 
@@ -9,7 +9,8 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
   } else {
-    cb(new Error("Only image files are allowed"), false);
+    // Return an ApiError so errorHandler returns 400 (not 500)
+    cb(new ApiError(400, "Only image files are allowed"), false);
   }
 };
 
