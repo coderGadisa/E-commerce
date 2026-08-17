@@ -1,4 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
+import { FiCamera } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import api from "../services/api";
@@ -11,6 +12,63 @@ function Profile() {
 
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Avatar state
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // ── Avatar handlers ──────────────────────────────────────
+  const handleAvatarFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only JPEG, PNG, and WebP images are allowed.");
+      e.target.value = "";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be smaller than 5 MB.");
+      e.target.value = "";
+      return;
+    }
+    // Show preview
+    const reader = new FileReader();
+    reader.onloadend = () => setAvatarPreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleAvatarUpload = async () => {
+    const file = fileInputRef.current?.files[0];
+    if (!file) return;
+    try {
+      setAvatarUploading(true);
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const res = await api.post("/users/avatar", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const updated = res.data.data;
+      // Persist new avatar in localStorage so it survives logout/login
+      localStorage.setItem("user", JSON.stringify({ ...user, avatar: updated.avatar }));
+      setAvatarPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      toast.success("Avatar updated!");
+      // Force re-read from storage by reloading user state
+      window.location.reload();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to upload avatar.");
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const handleAvatarCancel = () => {
+    setAvatarPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
   const [form, setForm] = useState({
     name: "", email: "",
     street: "", city: "", state: "", zipCode: "", country: "",
@@ -85,7 +143,62 @@ function Profile() {
 
       <div className="profile-card">
         <div className="profile-header">
-          <div className="profile-avatar">{user?.name?.charAt(0).toUpperCase()}</div>
+          {/* Avatar with upload overlay */}
+          <div className="profile-avatar-wrap">
+            {/* Show preview if selected, else Cloudinary URL, else initial */}
+            {avatarPreview ? (
+              <img src={avatarPreview} alt="Preview" className="profile-avatar-img" />
+            ) : user?.avatar ? (
+              <img src={user.avatar} alt={user.name} className="profile-avatar-img" />
+            ) : (
+              <div className="profile-avatar profile-avatar--initial">
+                {user?.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: "none" }}
+              onChange={handleAvatarFileChange}
+            />
+
+            {/* Camera button — always visible */}
+            <button
+              type="button"
+              className="avatar-camera-btn"
+              onClick={() => fileInputRef.current?.click()}
+              title="Change profile photo"
+              disabled={avatarUploading}
+            >
+              <FiCamera size={14} />
+            </button>
+
+            {/* Upload / cancel appear only when a file is staged */}
+            {avatarPreview && (
+              <div className="avatar-action-row">
+                <button
+                  type="button"
+                  className="btn-avatar-upload"
+                  onClick={handleAvatarUpload}
+                  disabled={avatarUploading}
+                >
+                  {avatarUploading ? "Uploading…" : "Upload"}
+                </button>
+                <button
+                  type="button"
+                  className="btn-avatar-cancel"
+                  onClick={handleAvatarCancel}
+                  disabled={avatarUploading}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+
           <div>
             <h2>{user?.name}</h2>
             <p>{user?.email}</p>

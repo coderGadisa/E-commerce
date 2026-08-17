@@ -124,18 +124,44 @@ const changeUserRole = async (targetUserId, newRole, requestingAdminId) => {
     role: target.role,
   };
 };
-const uploadAvatar = async (userId, filename) => {
+const cloudinary = require("../config/cloudinary");
+
+/**
+ * Upload avatar via Cloudinary stream from buffer.
+ * Stores the secure_url in user.avatar (the correct schema field).
+ * The old uploadAvatar stored to user.profileImage which doesn't
+ * exist in the schema — this replaces that broken implementation.
+ */
+const uploadAvatar = async (userId, fileBuffer) => {
   const user = await User.findById(userId);
+  if (!user) throw new ApiError(404, "User not found");
 
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
+  const avatarUrl = await new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "techstore/avatars",
+        resource_type: "image",
+        transformation: [{ width: 200, height: 200, crop: "fill", gravity: "face" }],
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(fileBuffer);
+  });
 
-  user.profileImage = `uploads/${filename}`;
-
+  user.avatar = avatarUrl;
   await user.save();
 
-  return user;
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    avatar: user.avatar,
+    address: user.address,
+  };
 };
 module.exports = {
   getUserProfile,
