@@ -158,15 +158,15 @@ function AdminUsers() {
                               alignItems: "center",
                               gap: 4,
                             }}
-                            title={u.role === "admin" ? "Demote to user" : "Promote to admin"}
+                            title={u.role === "admin" ? "Demote to customer" : "Promote to admin"}
                             onClick={() => setConfirmRole({
                               id: u._id,
                               name: u.name,
-                              newRole: u.role === "admin" ? "user" : "admin",
+                              newRole: u.role === "admin" ? "customer" : "admin",
                             })}
                           >
                             {u.role === "admin"
-                              ? <><FiUser size={13} /> Make User</>
+                              ? <><FiUser size={13} /> Make Customer</>
                               : <><FiShield size={13} /> Make Admin</>
                             }
                           </button>

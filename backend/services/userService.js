@@ -95,10 +95,10 @@ const deleteUser = async (userId) => {
 /**
  * Change a user's role. Protected by:
  *  - last-admin guard: if target is admin and they're the only one → block
- *  - valid role values only: "user" | "admin"
+ *  - valid role values only: "customer" | "admin"
  */
 const changeUserRole = async (targetUserId, newRole, requestingAdminId) => {
-  const VALID_ROLES = ["user", "admin"];
+  const VALID_ROLES = ["customer", "admin"];
   if (!VALID_ROLES.includes(newRole)) {
     throw new ApiError(400, `Invalid role. Must be one of: ${VALID_ROLES.join(", ")}`);
   }

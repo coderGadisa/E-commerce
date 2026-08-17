@@ -23,13 +23,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ["customer", "admin"],
+      default: "customer",
     },
     address: {
-      street:  { type: String, default: "" },
-      city:    { type: String, default: "" },
-      state:   { type: String, default: "" },
+      street: { type: String, default: "" },
+      city: { type: String, default: "" },
+      state: { type: String, default: "" },
       zipCode: { type: String, default: "" },
       country: { type: String, default: "" },
     },
