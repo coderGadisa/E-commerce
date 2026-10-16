@@ -1,0 +1,35 @@
+.announcement-bar {
+  background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 100%);
+  color: #fff;
+  text-align: center;
+  padding: 10px 48px;
+  font-size: 13.5px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.announcement-bar p {
+  margin: 0;
+  color: #fff;
+}
+
+.announcement-close {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.18);
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.announcement-close:hover { background: rgba(255,255,255,0.32); }

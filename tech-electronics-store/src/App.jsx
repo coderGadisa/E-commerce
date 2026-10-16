@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 // Layout
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
+import AnnouncementBar from "./components/AnnouncementBar/AnnouncementBar";
 
 // Auth routes
 import { PrivateRoute, AdminRoute } from "./routes/PrivateRoute";
@@ -37,6 +38,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 function App() {
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <AnnouncementBar />
       <Navbar />
 
       <main style={{ flex: 1 }}>
